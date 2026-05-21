@@ -8,7 +8,10 @@
         "dev:web": "pnpm --filter @docflow/web dev",
         "db:generate": "pnpm --filter @docflow/db generate",
         "db:migrate": "pnpm --filter @docflow/db migrate",
-        "db:studio": "pnpm --filter @docflow/db studio"
+        "db:studio": "pnpm --filter @docflow/db studio",
+        "docker:up": "docker compose -f infra/docker-compose.yml up -d",
+        "docker:down": "docker compose -f infra/docker-compose.yml down",
+        "docker:ps": "docker compose -f infra/docker-compose.yml ps"
     },
     "engines": {
         "node": ">=20"
