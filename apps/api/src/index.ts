@@ -1,0 +1,1 @@
+console.log("DocFlow API — Step 3 will add Fastify server");

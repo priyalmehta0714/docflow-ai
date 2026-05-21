@@ -1,0 +1,16 @@
+{
+    "name": "docflow-ai",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev:api": "pnpm --filter @docflow/api dev",
+        "dev:worker": "pnpm --filter @docflow/worker dev",
+        "dev:web": "pnpm --filter @docflow/web dev",
+        "db:generate": "pnpm --filter @docflow/db generate",
+        "db:migrate": "pnpm --filter @docflow/db migrate",
+        "db:studio": "pnpm --filter @docflow/db studio"
+    },
+    "engines": {
+        "node": ">=20"
+    }
+}

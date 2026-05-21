@@ -1,0 +1,9 @@
+{
+  "name": "@docflow/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo Web UI starts in Step 10",
+    "typecheck": "echo skip"
+  }
+}
