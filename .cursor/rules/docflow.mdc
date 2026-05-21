@@ -1,0 +1,13 @@
+---
+description: DocFlow AI project rules
+globs:
+alwaysApply: true
+---
+
+# DocFlow AI
+
+- Use Node 20, TypeScript, pnpm workspaces
+- Vector DB: Pinecone only (not Qdrant)
+- Every query must filter by tenantId from JWT
+- RAG logic lives in packages/rag only
+- Validate env and API bodies with Zod
