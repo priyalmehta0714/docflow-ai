@@ -1,10 +1,140 @@
+// ========== Generator: builds TypeScript client ==========
 generator client {
   provider = "prisma-client-js"
 }
 
+// ========== Datasource: which database ==========
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// Full models (User, Document, etc.) come in Step 4
+// ========== Enums (fixed status values) ==========
+enum Role {
+  USER
+  ADMIN
+}
+
+enum DocStatus {
+  PENDING
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum ExtractionStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum JobStatus {
+  QUEUED
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+// ========== Models (tables) ==========
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  tenantId  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId])
+}
+
+model Document {
+  id          String    @id @default(uuid())
+  tenantId    String
+  filename    String
+  mimeType    String
+  storagePath String
+  status      DocStatus @default(PENDING)
+  pageCount   Int?
+  docType     String?
+  errorMessage String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  chunks      Chunk[]
+  extractions Extraction[]
+  queryLogs   QueryLog[]
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+}
+
+model Chunk {
+  id         String   @id @default(uuid())
+  documentId String
+  tenantId   String
+  content    String
+  pageStart  Int?
+  pageEnd    Int?
+  tokenCount Int
+  vectorId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([tenantId])
+}
+
+model QueryLog {
+  id         String   @id @default(uuid())
+  tenantId   String
+  documentId String?
+  question   String
+  answer     String
+  citations  Json
+  refused    Boolean  @default(false)
+  model      String
+  latencyMs  Int
+  tokenUsage Json?
+  createdAt  DateTime @default(now())
+
+  document Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([documentId])
+}
+
+model Extraction {
+  id         String           @id @default(uuid())
+  documentId String
+  tenantId   String
+  schemaType String
+  resultJson Json
+  confidence Float
+  status     ExtractionStatus @default(PENDING_REVIEW)
+  reviewedBy String?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([tenantId])
+}
+
+model Job {
+  id        String    @id @default(uuid())
+  tenantId  String
+  type      String
+  payload   Json
+  status    JobStatus @default(QUEUED)
+  attempts  Int       @default(0)
+  error     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([tenantId, status])
+}
