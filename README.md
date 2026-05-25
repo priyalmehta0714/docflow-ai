@@ -1,4 +1,7 @@
 # DocFlow AI
+## Live demo
+- API: https://zesty-inspiration-production-1a1d.up.railway.app/health
+- Walkthrough: [2-min Postman demo](https://www.loom.com/share/040e3f1982e34810ab0118c4ef7f9b6a)
 
 **DocFlow AI** is a production-style document intelligence API built with Node.js. Upload PDFs, process them in the background, store embeddings in Pinecone, and ask questions with **citation-backed** answers.
 
