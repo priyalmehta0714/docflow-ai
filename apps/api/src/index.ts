@@ -20,12 +20,14 @@ for (const envPath of envPaths) {
 async function main() {
   const { app, env } = await buildApp();
 
+  const port = Number(process.env.PORT ?? env.API_PORT);
+
   await app.listen({
-    port: env.API_PORT,
+    port,
     host: "0.0.0.0",
   });
 
-  console.log(`API running at http://localhost:${env.API_PORT}`);
+  console.log(`API running on port ${port}`);
 }
 
 main().catch((err) => {

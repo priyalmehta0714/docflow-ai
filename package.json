@@ -11,7 +11,10 @@
         "db:studio": "dotenv -e .env -- pnpm --filter @docflow/db studio",
         "docker:up": "docker compose -f infra/docker-compose.yml up -d",
         "docker:down": "docker compose -f infra/docker-compose.yml down",
-        "docker:ps": "docker compose -f infra/docker-compose.yml ps"
+        "docker:ps": "docker compose -f infra/docker-compose.yml ps",
+        "build": "pnpm db:generate",
+        "db:migrate:deploy": "pnpm --filter @docflow/db migrate:deploy",
+        "start:prod": "sh scripts/start-production.sh"
     },
     "devDependencies": {
         "dotenv-cli": "^7.4.2"
