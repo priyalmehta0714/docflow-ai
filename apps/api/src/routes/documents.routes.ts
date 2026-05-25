@@ -2,9 +2,15 @@ import { FastifyPluginAsync } from "fastify";
 import { mkdir, writeFile } from "fs/promises";
 import { join, extname, resolve } from "path";
 import { randomUUID } from "crypto";
+import { z } from "zod";
 import { prisma, DocStatus } from "@docflow/db";
+import { queryDocument } from "@docflow/rag";
 import { requireAuth } from "../utils/require-auth.js";
 import { enqueueIngestJob } from "../queues/ingest.queue.js";
+
+const queryBodySchema = z.object({
+  question: z.string().min(3).max(2000),
+});
 
 const UPLOAD_DIR = process.env.UPLOAD_DIR ?? "./uploads";
 const MAX_MB = Number(process.env.MAX_UPLOAD_MB ?? 25);
@@ -89,6 +95,58 @@ export const documentRoutes: FastifyPluginAsync = async (app) => {
     });
 
     return { documents };
+  });
+
+  // POST /documents/:id/query — RAG Q&A with citations
+  app.post("/documents/:id/query", async (request, reply) => {
+    const { tenantId } = request.user;
+    const { id } = request.params as { id: string };
+
+    const body = queryBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.code(400).send({ error: body.error.flatten() });
+    }
+
+    const doc = await prisma.document.findFirst({
+      where: { id, tenantId },
+    });
+
+    if (!doc) {
+      return reply.code(404).send({ error: "Document not found" });
+    }
+
+    if (doc.status !== DocStatus.READY) {
+      return reply.code(400).send({
+        error: `Document is not ready for questions. Current status: ${doc.status}`,
+      });
+    }
+
+    const start = Date.now();
+
+    const result = await queryDocument(body.data.question, tenantId, id);
+
+    const latencyMs = Date.now() - start;
+
+    await prisma.queryLog.create({
+      data: {
+        tenantId,
+        documentId: id,
+        question: body.data.question,
+        answer: result.answer,
+        citations: result.citations,
+        refused: result.refused,
+        model: result.model,
+        latencyMs,
+      },
+    });
+
+    return {
+      answer: result.answer,
+      citations: result.citations,
+      refused: result.refused,
+      model: result.model,
+      latencyMs,
+    };
   });
 
   // GET /documents/:id — one document

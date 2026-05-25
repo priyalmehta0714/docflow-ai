@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev:api": "pnpm --filter @docflow/api dev",
+        "dev:api": "dotenv -e .env -- pnpm --filter @docflow/api dev",
         "dev:worker": "dotenv -e .env -- pnpm --filter @docflow/worker dev",
         "dev:web": "pnpm --filter @docflow/web dev",
         "db:generate": "dotenv -e .env -- pnpm --filter @docflow/db generate",

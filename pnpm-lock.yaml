@@ -17,6 +17,9 @@ importers:
       '@docflow/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@docflow/rag':
+        specifier: workspace:*
+        version: link:../../packages/rag
       '@docflow/shared':
         specifier: workspace:*
         version: link:../../packages/shared
