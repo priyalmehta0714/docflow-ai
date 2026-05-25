@@ -1,2 +1,3 @@
-// Pinecone + OpenAI RAG logic will go here (Step 6+)
-export const RAG_PLACEHOLDER = true;
+export { chunkText, type TextChunk } from "./chunker.js";
+export { embedTexts } from "./embedder.js";
+export { getChunkIndex } from "./pinecone.js";

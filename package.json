@@ -4,14 +4,17 @@
     "private": true,
     "scripts": {
         "dev:api": "pnpm --filter @docflow/api dev",
-        "dev:worker": "pnpm --filter @docflow/worker dev",
+        "dev:worker": "dotenv -e .env -- pnpm --filter @docflow/worker dev",
         "dev:web": "pnpm --filter @docflow/web dev",
-        "db:generate": "pnpm --filter @docflow/db generate",
-        "db:migrate": "pnpm --filter @docflow/db migrate",
-        "db:studio": "pnpm --filter @docflow/db studio",
+        "db:generate": "dotenv -e .env -- pnpm --filter @docflow/db generate",
+        "db:migrate": "dotenv -e .env -- pnpm --filter @docflow/db migrate",
+        "db:studio": "dotenv -e .env -- pnpm --filter @docflow/db studio",
         "docker:up": "docker compose -f infra/docker-compose.yml up -d",
         "docker:down": "docker compose -f infra/docker-compose.yml down",
         "docker:ps": "docker compose -f infra/docker-compose.yml ps"
+    },
+    "devDependencies": {
+        "dotenv-cli": "^7.4.2"
     },
     "engines": {
         "node": ">=20"
